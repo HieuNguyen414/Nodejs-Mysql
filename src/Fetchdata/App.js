@@ -55,6 +55,10 @@ export default class App extends Component {
           </Modal> */}
 
           <FlatList
+            onEndReachedThreshold={1}
+            onEndReached={({ distanceFromEnd }) => {
+              console.log('on end reached ', distanceFromEnd)
+            }}
             data={ this.state.data }
             keyExtractor={(item, id) => id}
             refreshControl = {
@@ -64,16 +68,8 @@ export default class App extends Component {
               />
             }
             renderItem={({item}) => 
-              <View style = {{borderColor:'black', borderWidth:1, padding:10, flexDirection:'row', backgroundColor:'#fff'}}>
-                <Right>
-                  <Thumbnail small source = {{uri:item.image}}/>
-                </Right>
-                <Body>
-                  <Text>{item.name}</Text>
-                </Body>
-                <Left>
-                 <Image source = {require('../img/xicon.png')}/>
-                </Left>
+              <View>
+                <Text>{item.name}</Text>
               </View>
               }>
           </FlatList>

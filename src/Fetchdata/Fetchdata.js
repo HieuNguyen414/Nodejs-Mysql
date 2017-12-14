@@ -9,7 +9,7 @@ async function FetchData() {
         return responseJson // trả về danh sách dữ liệu
     }
     catch(error){
-        console.log('Error is')
+        console.log('Error')
     }
     
 }
