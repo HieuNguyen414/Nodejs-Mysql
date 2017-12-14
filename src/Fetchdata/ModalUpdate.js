@@ -1,82 +1,121 @@
 import React, { Component } from 'react';
-import { View, Button, Image, Alert } from 'react-native'
-import { StyleSheet, TextInput, Dimensions, TouchableOpacity, Text} from 'react-native';
-const { width, height } = Dimensions.get('window');
+import {TextInput, TouchableOpacity, Text, View, Image, Alert, Dimensions} from 'react-native';
+import Modal from 'react-native-modalbox';
+const {height, width} = Dimensions.get('window');
 
-class ModalUpdate  extends Component {
+export default class AddModal extends Component {
   constructor(props){
     super(props);
     this.state = {
-      isModalVisible: false,
       tipname:'',
       tipage:'',
       tipaddress:'',
-      tipthumbnail:'',
+      tipimage:'',
       tipdescription:'',
       data: [],
     }
   }
   InsertData= () =>{
-   return fetch('http://192.168.1.35:3111/todo/create', {
-     method: 'PUT',
-     headers: {
-       'Accept': 'application/json',
-       'Content-Type': 'application/json',
-     },
-     body: JSON.stringify({
-       name: this.state.tipname,
-       age: this.state.tipage,
-       address: this.state.tipaddress,
-       thumbnail: this.state.tipthumbnail,
-       description: this.state.tipdescription
-     })
-   })
-   .then((response) => response.json())
-   .then((responseJson) => {
-     this.setState({data: responseJson}); 
-     this.setState({isModalVisible:true});
-     
-   })
-   .catch((error) => {
-     console.error(error);
-   });
-}
-
+    return fetch('http://192.168.1.35:3111/todo/create', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: this.state.tipname,
+        age: this.state.tipage,
+        address: this.state.tipaddress,
+        image: this.state.tipimage,
+        description: this.state.tipdescription
+      })
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      this.setState({data: responseJson});
+      this.refs.modalcreate.close();
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
+  showAddModal = ()=>{
+    this.refs.modalcreate.open()
+  }
   render() {
     return (
-      <View>
-        <TextInput style = {styles.textip_modal} placeholder = "Name"
+      <Modal 
+        ref = {"modalcreate"}
+        position = "center"
+        backdrop = {true}
+        // onClosed = {()=>{alert('Modal closed')}}
+        style = {{
+          justifyContent:'center',
+          borderRadius:10,
+          width:width -80,
+          height:300}}>
+
+        <Text style = {{textAlign:'center'}}>Thêm dữ liệu</Text>
+        <TextInput
+          style = {{height:35, marginTop:5}}
+          placeholder = "Name"
+          value = {this.state.tipname}
           onChangeText={(tipname) => this.setState({tipname})}
         />
-        <TextInput style = {styles.textip_modal} placeholder = "Age"
+        <TextInput
+          style = {{height:35, marginTop:5}}
+          placeholder = "Age"
+          value = {this.state.tipage}
           onChangeText={(tipage) => this.setState({tipage})}
         />
-        <TextInput style = {styles.textip_modal} placeholder = "Address"
+        <TextInput
+          style = {{height:35, marginTop:5}}
+          placeholder = "Address"
+          value = {this.state.tipaddress}
           onChangeText={(tipaddress) => this.setState({tipaddress})}
         />
-         <TextInput style = {styles.textip_modal} placeholder = "Image"
-          onChangeText={(tipthumbnail) => this.setState({tipthumbnail})}
+        <TextInput
+          style = {{height:35, marginTop:5}}
+          placeholder = "Image"
+          value = {this.state.tipimage}
+          onChangeText={(tipimage) => this.setState({tipimage})}
         />
-        <TextInput style = {styles.textip_modal} placeholder = "Description"
+        <TextInput
+          style = {{height:35, marginTop:5}}
+          placeholder = "Description"
+          value = {this.state.tipdescription}
           onChangeText={(tipdescription) => this.setState({tipdescription})}
         />
-        <TouchableOpacity style={styles.touch_add} onPress={this.InsertData}>
-          <Image style = {{width:30, height:30}} source={require('../img/add.png')} />
+        <TouchableOpacity 
+         onPress = {() =>this.InsertData}
+          style = {{
+            alignItems:'center', 
+            justifyContent:'center'}}>
+          <Text 
+            style = {{
+              textAlign:'center', 
+              backgroundColor:'green', 
+              padding:8, 
+              width:50}}>
+            Save
+          </Text>
         </TouchableOpacity>
-      </View>
+        <TouchableOpacity onPress = {()=>this.refs.modalcreate.close()}>
+          <Text>Close</Text>
+        </TouchableOpacity>
+      </Modal>
     )
   }
 }
-const styles = StyleSheet.create({
-  textip_modal:{
-    backgroundColor:'#fff',
-  },
-  touch_add:{
-    marginTop:5,
-    padding: 5,
-    justifyContent: 'center', 
-    alignItems:'center',
-  }
-});
 
-export default ModalUpdate
+
+
+// onPress = {() =>{
+//   //bắt lỗi
+//   if(this.state.tipname.length == 0 || this.state.tipage.length == 0 || this.state.tipaddress.length == 0){
+//     alert('Bạn phải nhập tên, tuổi và địa chỉ')
+//     return;
+//   }
+//   // làm gì đó
+//   this.refs.modalcreate.close()
+// }}

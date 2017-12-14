@@ -5,6 +5,7 @@ import App from './src/Fetchdata/App';
 import SearchAsset from './src/SearchAsset/SearchAsset.js';
 // import Trinhchieu from './src/Slideshow/Trinhchieu.js';
 import GetInfo from './src/Info/GetInfo.js';
+import BasicFlatList from './src/Cbasic/BasicFlatList';
 import Tesst from './Tesst';
 
-AppRegistry.registerComponent('Testthu', () => App);
+AppRegistry.registerComponent('Testthu', () => BasicFlatList);

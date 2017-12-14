@@ -19,6 +19,7 @@
     "react-native-responsive-ui": "^1.1.1",
     "react-native-searchbar": "^1.13.0",
     "react-native-slideshow": "^1.0.1",
+    "react-native-swipeout": "^2.3.3",
     "react-native-swiper": "^1.5.13"
   },
   "devDependencies": {
