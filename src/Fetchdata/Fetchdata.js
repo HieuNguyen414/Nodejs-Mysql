@@ -1,5 +1,6 @@
-const URLApiGet = 'http://192.168.1.35:3111/todo'; // api fetch
-const URLApiPost = 'http://192.168.1.35:3111/todo/create'; // api post
+const URLApiGet = 'http://192.168.1.2:3111/todo'; // api fetch
+const URLApiPost = 'http://192.168.1.2:3111/todo/create'; // api post (add data)
+const URLApiPut = 'http://192.168.1.2:3111/todo/update'; // api put (update data)
 
 //xử lý bất đồng bồ, syntax es7
 async function FetchData() {
@@ -12,7 +13,7 @@ async function FetchData() {
     console.log('Error')
   }
 }
-
+ // inser data function
 async function InsertData(params) {
   try{
     let response = await fetch(URLApiPost,{
@@ -31,6 +32,26 @@ async function InsertData(params) {
   }
 }
 
+  // update data function
+  async function UpdateData(params) {
+    try{
+      let response = await fetch(URLApiPut,{
+        method:'PUT',
+        headers:{
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body:JSON.stringify(params) // chuyển qua dạng json
+      }); 
+      let responseJson = await response.json();
+      return responseJson.resuilt;
+    }
+    catch(error){
+      console.log('Error')
+    }
+  }
+
 // public để các file khác có thể lấy xài hàm này
 export {FetchData};
 export {InsertData};
+export {UpdateData};

@@ -16,8 +16,7 @@ export default class AddModal extends Component {
       data: [],
     }
   }
-
-  // 
+  // show modal
   showAddModal = ()=>{
     this.refs.modalcreate.open()
   }
@@ -53,12 +52,12 @@ export default class AddModal extends Component {
           value = {this.state.tipaddress}
           onChangeText={(tipaddress) => this.setState({tipaddress})}
         />
-        <TextInput
+        {/* <TextInput
           style = {{height:35, marginTop:5}}
           placeholder = "Image"
           value = {this.state.tipimage}
           onChangeText={(tipimage) => this.setState({tipimage})}
-        />
+        /> */}
         <TextInput
           style = {{height:35, marginTop:5}}
           placeholder = "Description"
@@ -84,7 +83,9 @@ export default class AddModal extends Component {
             InsertData(newData).then(()=>{
                 this.props.parentFlatList.GetDatfromServer()
             });
-            this.refs.modalcreate.close()
+            this.props.parentFlatList.refreshFlatList();
+            this.refs.modalcreate.close();
+            alert('Thêm dữ liệu thành công');
             }}
         >
           <Text 

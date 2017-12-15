@@ -20,7 +20,13 @@ import {FetchData} from './Fetchdata';
 class FlatListItem extends Component{
   constructor(props){
     super(props);
+    this.state = {
+      item: {} // khi có sự thay đổi thì state thay đổi -> hàm render được chạy lại -> view thay đổi
+    }
 
+  }
+  refreshFlatListItem = (changedItem) =>{
+    this.setState({item:changedItem})
   }
 render(){
   const swipeSettings  = {
@@ -52,7 +58,8 @@ render(){
     left:[
       {
         onPress:() =>{
-          alert('left')
+          let selectedItem = this.state.item.name ? this.state.item: this.props.item;
+          this.props.parentFlatList.refs.modalupdate.showEditModal(selectedItem, this);
         },
         text:"Edit", type:'primary'
       }
@@ -70,8 +77,8 @@ render(){
             style = {{width:80, height:80, margin:5}}
             />
           <View style = {{flex:1, height:80}}>
-            <Text style = {styles.text} >{this.props.item.name}</Text>
-            <Text style = {styles.text}>{this.props.item.description}</Text>
+            <Text style = {styles.text} >{this.state.item.name ? this.state.item.name :this.props.item.name}</Text>
+            <Text style = {styles.text}>{this.state.item.description ? this.state.item.description: this.props.item.description}</Text>
           </View>
         </View>
         <View style = {{
@@ -132,7 +139,7 @@ export default class App extends Component {
         lammoitucthi:lammoitucthi
       };
     });
-    this.refs.FlatlistData.scrollToEnd();
+    this.refs.FlatL.scrollToEnd();
   }
 
   render() {
@@ -152,7 +159,7 @@ export default class App extends Component {
         {/* data */}
       <View>
         <FlatList 
-          ref = "FlatlistData"
+          ref = "FlatL"
           data={ this.state.data }
           keyExtractor={(item, id) => id}
           refreshControl = {
