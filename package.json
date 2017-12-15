@@ -11,6 +11,7 @@
     "express": "^4.16.2",
     "mysql": "^2.15.0",
     "native-base": "^2.3.3",
+    "random-string": "^0.2.0",
     "react": "16.0.0",
     "react-native": "0.50.3",
     "react-native-modal": "^4.1.1",

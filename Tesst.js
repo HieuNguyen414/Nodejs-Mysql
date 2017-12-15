@@ -1,34 +1,27 @@
+//import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
-import Swiper from 'react-native-swiper';
-var {height, width} = Dimensions.get('window');
+import { View, Text, StyleSheet } from 'react-native';
 
-export default class Category extends Component {
+// create a component
+class Tesst extends Component {
   render() {
     return (
-      <View >
-        <View >
-          <Text >LIST OF CATEGORY</Text>
-        </View>
-        <View >
-          <Swiper showsButtons={true} autoplay={true} width={imagWidth} height={imagHeight}>
-            <Image source={require('./src/img/swiper-2.jpg')} style={styles.imgbanner} />
-            <Image source={require('./src/img/swiper-2.jpg')} style={styles.imgbanner} />
-            <Image source={require('./src/img/swiper-2.jpg')} style={styles.imgbanner} />
-          </Swiper>
-        </View>
+      <View style={styles.container}>
+        <Text>Tesst</Text>
       </View>
     );
   }
 }
 
-const imagWidth = width - 40;
-const imagHeight = (imagWidth / 933) * 465 ;
-
+// define your styles
 const styles = StyleSheet.create({
-    imgbanner:{ 
-    width: 300,
-    height: 300
-}
-
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2c3e50',
+  },
 });
+
+//make this component available to the app
+export default Tesst;

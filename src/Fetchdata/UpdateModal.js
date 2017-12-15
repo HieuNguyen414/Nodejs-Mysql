@@ -3,7 +3,7 @@ import {TextInput, TouchableOpacity, Text, View, Image, Alert, Dimensions} from 
 import Modal from 'react-native-modalbox';
 const {height, width} = Dimensions.get('window');
 
-export default class AddModal extends Component {
+export default class UpdateModal extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -39,8 +39,8 @@ export default class AddModal extends Component {
       console.error(error);
     });
   }
-  showAddModal = ()=>{
-    this.refs.modalcreate.open()
+  showUpdateModal = ()=>{
+    this.refs.modalupdate.open()
   }
   render() {
     return (

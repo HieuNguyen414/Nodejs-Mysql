@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {TextInput, TouchableOpacity, Text, View, Image, Alert, Dimensions} from 'react-native';
 import Modal from 'react-native-modalbox';
 const {height, width} = Dimensions.get('window');
+import {InsertData} from './Fetchdata';
 
 export default class AddModal extends Component {
   constructor(props){
@@ -15,30 +16,8 @@ export default class AddModal extends Component {
       data: [],
     }
   }
-  InsertData= () =>{
-    return fetch('http://192.168.1.35:3111/todo/create', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: this.state.tipname,
-        age: this.state.tipage,
-        address: this.state.tipaddress,
-        image: this.state.tipimage,
-        description: this.state.tipdescription
-      })
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      this.setState({data: responseJson});
-      this.refs.modalcreate.close();
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  }
+
+  // 
   showAddModal = ()=>{
     this.refs.modalcreate.open()
   }
@@ -87,10 +66,27 @@ export default class AddModal extends Component {
           onChangeText={(tipdescription) => this.setState({tipdescription})}
         />
         <TouchableOpacity 
-         onPress = {() =>this.InsertData}
           style = {{
             alignItems:'center', 
-            justifyContent:'center'}}>
+            justifyContent:'center'}}
+          onPress = {() =>{
+            if(this.state.tipname.length == 0 || this.state.tipage.length == 0 || this.state.tipaddress.length == 0){
+              alert('Bạn phải nhập tên, tuổi và địa chỉ')
+              return;
+            }
+            const newData = {
+              name:this.state.tipname,
+              age:this.state.tipage,
+              address:this.state.tipaddress,
+              image:"https://www.unilad.co.uk/wp-content/uploads/2017/08/Capture-gtg-1.jpg",
+              description:this.state.tipdescription,
+            };
+            InsertData(newData).then(()=>{
+                this.props.parentFlatList.GetDatfromServer()
+            });
+            this.refs.modalcreate.close()
+            }}
+        >
           <Text 
             style = {{
               textAlign:'center', 
@@ -100,6 +96,8 @@ export default class AddModal extends Component {
             Save
           </Text>
         </TouchableOpacity>
+
+        {/* button hide modal */}
         <TouchableOpacity onPress = {()=>this.refs.modalcreate.close()}>
           <Text>Close</Text>
         </TouchableOpacity>
@@ -112,10 +110,38 @@ export default class AddModal extends Component {
 
 // onPress = {() =>{
 //   //bắt lỗi
-//   if(this.state.tipname.length == 0 || this.state.tipage.length == 0 || this.state.tipaddress.length == 0){
-//     alert('Bạn phải nhập tên, tuổi và địa chỉ')
-//     return;
-//   }
+  // if(this.state.tipname.length == 0 || this.state.tipage.length == 0 || this.state.tipaddress.length == 0){
+  //   alert('Bạn phải nhập tên, tuổi và địa chỉ')
+  //   return;
+  // }
 //   // làm gì đó
 //   this.refs.modalcreate.close()
 // }}
+
+
+// https://www.unilad.co.uk/wp-content/uploads/2017/08/Capture-gtg-1.jpg
+
+// InsertData= () =>{
+//   return fetch('http://192.168.1.35:3111/todo/create', {
+//     method: 'POST',
+//     headers: {
+//       'Accept': 'application/json',
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({
+//       name: this.state.tipname,
+//       age: this.state.tipage,
+//       address: this.state.tipaddress,
+//       image: this.state.tipimage,
+//       description: this.state.tipdescription
+//     })
+//   })
+//   .then((response) => response.json())
+//   .then((responseJson) => {
+//     this.setState({data: responseJson});
+//     this.refs.modalcreate.close();
+//   })
+//   .catch((error) => {
+//     console.error(error);
+//   });
+// }

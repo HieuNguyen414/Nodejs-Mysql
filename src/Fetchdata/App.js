@@ -5,14 +5,85 @@ import {Container, Header,Title, Content, Body, Left, Right,
   List, ListItem, Thumbnail, Footer} from 'native-base';
 import styles from './styles';
 import AddModal from './AddModal.js';
-import ModalUpdate from './ModalUpdate';
+import UpdateModal from './UpdateModal';
 import Modal from 'react-native-modalbox';
 import Icon     from 'react-native-vector-icons/Entypo';
 const {height, width} = Dimensions.get('window');
+import Swipeout from 'react-native-swipeout'
+
 
 // import hàm fetch dữ liệu
 import {FetchData} from './Fetchdata';
-import {InsertData} from './Fetchdata';
+// import {InsertData} from './Fetchdata';
+
+
+class FlatListItem extends Component{
+  constructor(props){
+    super(props);
+
+  }
+render(){
+  const swipeSettings  = {
+    autoClose:true, // tự động đóng khi nhấn
+    onClose:(secId, rowId, direction) =>{
+    },
+    onOpen:(secId, rowId, direction) =>{
+    },
+    // kéo từ phải
+    right:[
+      {
+        onPress:() =>{
+          Alert.alert(
+            'Thông Báo',
+            'Are you sure you want to delete?',
+            [
+              {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'Yes', onPress: () => {
+                alert('chưa làm')
+              }},
+            ],
+            { cancelable: false }
+          )
+        },
+        text:"Delete", type:'delete'
+      }
+    ],
+    // kéo từ trái
+    left:[
+      {
+        onPress:() =>{
+          alert('left')
+        },
+        text:"Edit", type:'primary'
+      }
+    ],
+    rowId: this.props.index,
+    sectionId:1
+  };
+  return(
+    // khi mà prop quá nhiều thì khai báo nó bằng thuộc tính khác
+    <Swipeout {...swipeSettings}> 
+      <View>
+        <View style = {{flex:1,flexDirection:'row', backgroundColor:'white'}}> 
+          <Image 
+            source = {{uri:this.props.item.image}}
+            style = {{width:80, height:80, margin:5}}
+            />
+          <View style = {{flex:1, height:80}}>
+            <Text style = {styles.text} >{this.props.item.name}</Text>
+            <Text style = {styles.text}>{this.props.item.description}</Text>
+          </View>
+        </View>
+        <View style = {{
+          height:1,
+          backgroundColor:'black'
+        }}>
+        </View>
+      </View>
+    </Swipeout>
+  )
+}
+}
 
 export default class App extends Component {
   constructor(props){ 
@@ -20,11 +91,14 @@ export default class App extends Component {
     this.state = { 
       refreshing:false,
       data: [],
+      lammoitucthi:null
     } 
   }
+    // this function run after render function finish
   componentDidMount() {
     this.GetDatfromServer();
   }
+    // get data from mysql via nodejs
   GetDatfromServer = () =>{
     // PROMISE, khi nào có kết quả thì chui vào then
     //
@@ -39,101 +113,68 @@ export default class App extends Component {
       this.setState({refreshing:false})
     });
   }
+    // refresh data (pull to refresh)
   onRefresh = ()=>{
     this.GetDatfromServer();
   }
+    // show modal add 
   _onPressAdd = ()=>{
     this.refs.modalcreate.showAddModal()
+  }
+    // show modal update
+  _onPressUpdate = ()=>{
+    this.refs.modalupdate.showUpdateModal()
+  }
+    // refresh imendiately after add, delete or update data
+  refreshFlatList = (lammoitucthi)=>{
+    this.setState((prevState)=>{
+      return{
+        lammoitucthi:lammoitucthi
+      };
+    });
+    this.refs.FlatlistData.scrollToEnd();
   }
 
   render() {
   return (
     <View>
-      <View style = {{backgroundColor:'grey', height:64, flexDirection:'row', justifyContent:'flex-end', alignItems:'center'}}>
+        {/* header */}
+      <View style = {{
+          backgroundColor:'grey', 
+          height:64, 
+          flexDirection:'row', 
+          justifyContent:'flex-end', 
+          alignItems:'center'}}>
         <TouchableOpacity onPress = {this._onPressAdd}>
           <Image style = {{ marginRight:10}} source = {require('../img/plus.png')}/>
         </TouchableOpacity>
       </View>
-      <FlatList
-        ref = "FlatlistData"
-        data={ this.state.data }
-        keyExtractor={(item, id) => id}
-        refreshControl = {
-          <RefreshControl
-            refreshing = {this.state.refreshing}
-            onRefresh  = {this.onRefresh}
-          />
-        }
-        renderItem={({item}) => 
-          <View style = {{flexGrow:50}}>
-            <TouchableOpacity onPress = {()=>{this.refs.FlatlistData.scrollToEnd()}}>
-              <Text style = {{borderWidth:0.3, padding:10, borderColor:'grey'}}>{item.name}</Text>
-            </TouchableOpacity>
-          </View>
-          }>
-      </FlatList>
-      {/*  */}
-      <AddModal ref={"modalcreate"} parentFlatlist = {this}> 
-      </AddModal>
+        {/* data */}
+      <View>
+        <FlatList 
+          ref = "FlatlistData"
+          data={ this.state.data }
+          keyExtractor={(item, id) => id}
+          refreshControl = {
+            <RefreshControl
+              refreshing = {this.state.refreshing}
+              onRefresh  = {this.onRefresh}
+            />
+            }
+          renderItem = {({item, index}) =>{
+            return(
+              // defined component FlatListItem above (class FlatListItem )
+            <FlatListItem item = {item} index = {index} parentFlatList = {this}>
+            </FlatListItem>)
+          }}>
+          
+        </FlatList>
+      </View>
+
+       {/* Modal here  */}
+      <AddModal ref={"modalcreate"} parentFlatList = {this}/> 
+      <UpdateModal ref={"modalupdate"} parentFlatList = {this}/> 
     </View>
     );
   }
 }
-
-
-
-      // <Header>
-      //   <Left>
-      //     <TouchableOpacity style = {styles.left_header_home}>
-      //       <Icon name = "home" color = {'#fff'} size = {20} />
-      //     </TouchableOpacity>
-      //   </Left>
-      //   <Body>
-      //     <Title>CRUD with Mysql</Title>
-      //   </Body>
-      //   <Right>
-      //     <TouchableOpacity style = {styles.right_header_plus} onPress={() => this.refs.modalcreate.open()}>
-      //         <Image  source = {require('../img/plus.png')}/>
-      //     </TouchableOpacity>
-      //   </Right>
-      // </Header>
-
-// open modal
-// this.refs.modalupdate.open()
-// this.refs.modalupdate.close()
-
-
-
-// render() {
-//   return (
-//     <Container>
-//       <Content >
-//         <View>
-//           <Modal ref={"modalcreate"} position={"top"}  style={{height:350}}>
-//             <ModalApp/>
-//           </Modal>
-//           <Modal ref={"modalupdate"} position={"top"}  style={{height:350}} >
-//             <ModalUpdate/>
-//           </Modal>
-
-//           <FlatList
-//             data={ this.state.data }
-//             keyExtractor={(item, id) => id}
-//             refreshControl = {
-//               <RefreshControl
-//                 refreshing = {this.state.refreshing}
-//                 onRefresh  = {this.onRefresh}
-//               />
-//             }
-//             renderItem={({item}) => 
-//               <View>
-//                   <Text style = {{borderWidth:0.3, padding:10, borderColor:'grey'}}>{item.name}</Text>
-//               </View>
-//               }>
-//           </FlatList>
-//         </View>
-//       </Content>
-//     </Container>
-//     );
-//   }
-// }
