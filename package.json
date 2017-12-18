@@ -16,6 +16,7 @@
     "react-native": "0.50.3",
     "react-native-modal": "^4.1.1",
     "react-native-modalbox": "^1.4.2",
+    "react-native-pages": "^0.6.1",
     "react-native-responsive-stylesheet": "^1.0.0",
     "react-native-responsive-ui": "^1.1.1",
     "react-native-searchbar": "^1.13.0",

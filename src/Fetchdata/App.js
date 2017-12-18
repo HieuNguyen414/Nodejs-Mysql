@@ -20,9 +20,15 @@ import {FetchData} from './Fetchdata';
 class FlatListItem extends Component{
   constructor(props){
     super(props);
+    this.state = {
+      item: {} // khi có sự thay đổi thì state thay đổi -> hàm render được chạy lại -> view thay đổi
+    }
 
   }
-render(){
+  refreshFlatListItem = (changedItem) =>{
+    this.setState({item:changedItem})
+  }
+  render(){
   const swipeSettings  = {
     autoClose:true, // tự động đóng khi nhấn
     onClose:(secId, rowId, direction) =>{
@@ -52,7 +58,8 @@ render(){
     left:[
       {
         onPress:() =>{
-          alert('left')
+          let selectedItem = this.state.item.name ? this.state.item: this.props.item;
+          this.props.parentFlatList.refs.modalupdate.showEditModal(selectedItem, this);
         },
         text:"Edit", type:'primary'
       }
@@ -70,8 +77,8 @@ render(){
             style = {{width:80, height:80, margin:5}}
             />
           <View style = {{flex:1, height:80}}>
-            <Text style = {styles.text} >{this.props.item.name}</Text>
-            <Text style = {styles.text}>{this.props.item.description}</Text>
+            <Text style = {styles.text} >{this.state.item.name ? this.state.item.name :this.props.item.name}</Text>
+            <Text style = {styles.text}>{this.state.item.description ? this.state.item.description: this.props.item.description}</Text>
           </View>
         </View>
         <View style = {{
@@ -91,7 +98,8 @@ export default class App extends Component {
     this.state = { 
       refreshing:false,
       data: [],
-      lammoitucthi:null
+      lammoitucthi:null,
+      isLoading:false,
     } 
   }
     // this function run after render function finish
@@ -132,7 +140,10 @@ export default class App extends Component {
         lammoitucthi:lammoitucthi
       };
     });
-    this.refs.FlatlistData.scrollToEnd();
+    this.refs.FlatL.scrollToEnd();
+  }
+  onEndReached(){
+   
   }
 
   render() {
@@ -145,6 +156,9 @@ export default class App extends Component {
           flexDirection:'row', 
           justifyContent:'flex-end', 
           alignItems:'center'}}>
+        <TextInput 
+          placeholder = {'Search'}
+        />
         <TouchableOpacity onPress = {this._onPressAdd}>
           <Image style = {{ marginRight:10}} source = {require('../img/plus.png')}/>
         </TouchableOpacity>
@@ -152,7 +166,7 @@ export default class App extends Component {
         {/* data */}
       <View>
         <FlatList 
-          ref = "FlatlistData"
+          ref = "FlatL"
           data={ this.state.data }
           keyExtractor={(item, id) => id}
           refreshControl = {
@@ -161,16 +175,16 @@ export default class App extends Component {
               onRefresh  = {this.onRefresh}
             />
             }
+          onEndReachedThreshold ={1}
+          onEndReached = {this.onEndReached.bind(this)}
           renderItem = {({item, index}) =>{
             return(
               // defined component FlatListItem above (class FlatListItem )
             <FlatListItem item = {item} index = {index} parentFlatList = {this}>
             </FlatListItem>)
           }}>
-          
         </FlatList>
       </View>
-
        {/* Modal here  */}
       <AddModal ref={"modalcreate"} parentFlatList = {this}/> 
       <UpdateModal ref={"modalupdate"} parentFlatList = {this}/> 

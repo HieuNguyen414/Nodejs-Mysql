@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {TextInput, TouchableOpacity, Text, View, Image, Alert, Dimensions} from 'react-native';
 import Modal from 'react-native-modalbox';
 const {height, width} = Dimensions.get('window');
+import {UpdateData} from './Fetchdata';
 
 export default class UpdateModal extends Component {
   constructor(props){
@@ -12,40 +13,24 @@ export default class UpdateModal extends Component {
       tipaddress:'',
       tipimage:'',
       tipdescription:'',
-      data: [],
     }
   }
-  InsertData= () =>{
-    return fetch('http://192.168.1.35:3111/todo/create', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: this.state.tipname,
-        age: this.state.tipage,
-        address: this.state.tipaddress,
-        image: this.state.tipimage,
-        description: this.state.tipdescription
-      })
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      this.setState({data: responseJson});
-      this.refs.modalcreate.close();
-    })
-    .catch((error) => {
-      console.error(error);
+
+  showEditModal = (chinhsua, danhsach) => {
+    this.setState({
+      // lấy từ state truyền vào textinput
+      id: chinhsua._id,
+      tipname:chinhsua.name,
+      tipage:chinhsua.age,
+      tipaddress:chinhsua.address,
+      tipdescription:chinhsua.description,
     });
-  }
-  showUpdateModal = ()=>{
-    this.refs.modalupdate.open()
+    this.refs.modalupdate.open();
   }
   render() {
     return (
       <Modal 
-        ref = {"modalcreate"}
+        ref = {"modalupdate"}
         position = "center"
         backdrop = {true}
         // onClosed = {()=>{alert('Modal closed')}}
@@ -55,7 +40,7 @@ export default class UpdateModal extends Component {
           width:width -80,
           height:300}}>
 
-        <Text style = {{textAlign:'center'}}>Thêm dữ liệu</Text>
+        <Text style = {{textAlign:'center'}}>Chỉnh sửa dữ liệu</Text>
         <TextInput
           style = {{height:35, marginTop:5}}
           placeholder = "Name"
@@ -76,21 +61,46 @@ export default class UpdateModal extends Component {
         />
         <TextInput
           style = {{height:35, marginTop:5}}
-          placeholder = "Image"
-          value = {this.state.tipimage}
-          onChangeText={(tipimage) => this.setState({tipimage})}
-        />
-        <TextInput
-          style = {{height:35, marginTop:5}}
           placeholder = "Description"
           value = {this.state.tipdescription}
           onChangeText={(tipdescription) => this.setState({tipdescription})}
         />
         <TouchableOpacity 
-         onPress = {() =>this.InsertData}
           style = {{
             alignItems:'center', 
-            justifyContent:'center'}}>
+            justifyContent:'center'}}
+          onPress = {() =>{
+            if(this.state.tipname.length == 0 || this.state.tipage.length == 0 || this.state.tipaddress.length == 0){
+              alert('Bạn phải nhập tên, tuổi và địa chỉ')
+              return;
+            }
+            // tìm phần tử muốn update
+            let params = {
+              id_id: this.state.id,
+              name:this.state.tipname,
+              age:this.state.tipage,
+              address:this.state.tipaddress,
+              description:this.state.tipdescription
+              
+            }
+            UpdateData(params).then(()=>{
+              this.state.FlatListItem.refreshFlatListItem({
+                _id: this.state.id,
+                name:this.state.tipname,
+                age:this.state.tipage,
+                address:this.state.tipaddress,
+                description:this.state.tipdescription
+              });
+              this.refs.modalupdate.close();
+            }).catch((error)=>{
+              console.log('Eror');
+              this.refs.modalupdate.close();
+            });
+            // refresh lại dữ liệu từ flatlis
+            // this.state.FlatListItem.refreshFlatListItem();
+            // this.refs.modalupdate.close();
+            }}
+        >
           <Text 
             style = {{
               textAlign:'center', 
@@ -100,7 +110,9 @@ export default class UpdateModal extends Component {
             Save
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress = {()=>this.refs.modalcreate.close()}>
+
+        {/* button hide modal */}
+        <TouchableOpacity onPress = {()=>this.refs.modalupdate.close()}>
           <Text>Close</Text>
         </TouchableOpacity>
       </Modal>
@@ -117,5 +129,31 @@ export default class UpdateModal extends Component {
 //     return;
 //   }
 //   // làm gì đó
-//   this.refs.modalcreate.close()
+//   this.refs.modalupdate.close()
 // }}
+
+
+// InsertData= () =>{
+//   return fetch('http://192.168.1.35:3111/todo/create', {
+//     method: 'POST',
+//     headers: {
+//       'Accept': 'application/json',
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify({
+//       name: this.state.tipname,
+//       age: this.state.tipage,
+//       address: this.state.tipaddress,
+//       image: this.state.tipimage,
+//       description: this.state.tipdescription
+//     })
+//   })
+//   .then((response) => response.json())
+//   .then((responseJson) => {
+//     this.setState({data: responseJson});
+//     this.refs.modalupdate.close();
+//   })
+//   .catch((error) => {
+//     console.error(error);
+//   });
+// }
