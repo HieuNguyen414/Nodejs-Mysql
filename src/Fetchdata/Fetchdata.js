@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 const URLApiGet = 'http://192.168.1.19:3111/todo'; // api fetch
 const URLApiPost = 'http://192.168.1.19:3111/todo/create'; // api post (add data)
 const URLApiPut = 'http://192.168.1.19:3111/todo/update'; // api put (update data)
+=======
+const URLApiGet = 'http://192.168.1.2:3111/todo'; // api fetch
+const URLApiPost = 'http://192.168.1.2:3111/todo/create'; // api post (add data)
+const URLApiPut = 'http://192.168.1.2:3111/todo/update'; // api put (update data)
+>>>>>>> b88ec6fa854369cfd7f1b143334db26d53bec17e
 
 //xử lý bất đồng bồ, syntax es7
 async function FetchData() {

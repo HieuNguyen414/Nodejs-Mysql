@@ -28,7 +28,11 @@ class FlatListItem extends Component{
   refreshFlatListItem = (changedItem) =>{
     this.setState({item:changedItem})
   }
+<<<<<<< HEAD
   render(){
+=======
+render(){
+>>>>>>> b88ec6fa854369cfd7f1b143334db26d53bec17e
   const swipeSettings  = {
     autoClose:true, // tự động đóng khi nhấn
     onClose:(secId, rowId, direction) =>{
@@ -141,9 +145,12 @@ export default class App extends Component {
       };
     });
     this.refs.FlatL.scrollToEnd();
+<<<<<<< HEAD
   }
   onEndReached(){
    
+=======
+>>>>>>> b88ec6fa854369cfd7f1b143334db26d53bec17e
   }
 
   render() {
