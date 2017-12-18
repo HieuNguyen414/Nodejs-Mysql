@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {TextInput, TouchableOpacity, Text, View, Image, Alert, Dimensions} from 'react-native';
+import {TextInput, TouchableOpacity, Text, Image, Alert, Dimensions} from 'react-native';
 import Modal from 'react-native-modalbox';
 const {height, width} = Dimensions.get('window');
 import {InsertData} from './Fetchdata';
@@ -52,12 +52,12 @@ export default class AddModal extends Component {
           value = {this.state.tipaddress}
           onChangeText={(tipaddress) => this.setState({tipaddress})}
         />
-        {/* <TextInput
+        <TextInput
           style = {{height:35, marginTop:5}}
-          placeholder = "Image"
+          placeholder = "Choose image from library"
           value = {this.state.tipimage}
           onChangeText={(tipimage) => this.setState({tipimage})}
-        /> */}
+        />
         <TextInput
           style = {{height:35, marginTop:5}}
           placeholder = "Description"

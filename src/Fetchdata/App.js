@@ -1,21 +1,12 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, TouchableOpacity, 
-  ActivityIndicator, Image, Dimensions,TextInput, Alert, RefreshControl, ScrollView} from 'react-native';
-import {Container, Header,Title, Content, Body, Left, Right,
-  List, ListItem, Thumbnail, Footer} from 'native-base';
-import styles from './styles';
+   Image, Dimensions,TextInput, Alert, RefreshControl, ActivityIndicator} from 'react-native';
+import Modal from 'react-native-modalbox';
+import Swipeout from 'react-native-swipeout'
 import AddModal from './AddModal.js';
 import UpdateModal from './UpdateModal';
-import Modal from 'react-native-modalbox';
-import Icon     from 'react-native-vector-icons/Entypo';
-const {height, width} = Dimensions.get('window');
-import Swipeout from 'react-native-swipeout'
-
-
-// import hàm fetch dữ liệu
+import styles from './styles';
 import {FetchData} from './Fetchdata';
-// import {InsertData} from './Fetchdata';
-
 
 class FlatListItem extends Component{
   constructor(props){
@@ -23,16 +14,11 @@ class FlatListItem extends Component{
     this.state = {
       item: {} // khi có sự thay đổi thì state thay đổi -> hàm render được chạy lại -> view thay đổi
     }
-
   }
   refreshFlatListItem = (changedItem) =>{
     this.setState({item:changedItem})
   }
-<<<<<<< HEAD
   render(){
-=======
-render(){
->>>>>>> b88ec6fa854369cfd7f1b143334db26d53bec17e
   const swipeSettings  = {
     autoClose:true, // tự động đóng khi nhấn
     onClose:(secId, rowId, direction) =>{
@@ -75,25 +61,23 @@ render(){
     // khi mà prop quá nhiều thì khai báo nó bằng thuộc tính khác
     <Swipeout {...swipeSettings}> 
       <View>
-        <View style = {{flex:1,flexDirection:'row', backgroundColor:'white'}}> 
+        <View style = {styles.viewSwipe}> 
           <Image 
             source = {{uri:this.props.item.image}}
-            style = {{width:80, height:80, margin:5}}
+            style = {styles.imgSwipe}
             />
-          <View style = {{flex:1, height:80}}>
-            <Text style = {styles.text} >{this.state.item.name ? this.state.item.name :this.props.item.name}</Text>
-            <Text style = {styles.text}>{this.state.item.description ? this.state.item.description: this.props.item.description}</Text>
+          <View style = {styles.viewData}>
+            <Text>{this.state.item.name ? this.state.item.name :this.props.item.name}</Text>
+            <Text>{this.state.item.description ? this.state.item.description: this.props.item.description}</Text>
           </View>
         </View>
-        <View style = {{
-          height:1,
-          backgroundColor:'black'
-        }}>
+          {/* dùng cái này để dữ liệu không bị tràn trong 1 phần tử hiển thị */}
+        <View style = {styles.bottomView}>
         </View>
       </View>
     </Swipeout>
-  )
-}
+   )
+ }
 }
 
 export default class App extends Component {
@@ -103,7 +87,8 @@ export default class App extends Component {
       refreshing:false,
       data: [],
       lammoitucthi:null,
-      isLoading:false,
+      isLoading:true, // use for ActivityIndicator
+      text: '',
     } 
   }
     // this function run after render function finish
@@ -112,11 +97,11 @@ export default class App extends Component {
   }
     // get data from mysql via nodejs
   GetDatfromServer = () =>{
-    // PROMISE, khi nào có kết quả thì chui vào then
-    //
+
     this.setState({refreshing:true});
-    FetchData().then((items) =>{
-      this.setState({data:items});
+    FetchData().then((responseJson) =>{
+      
+      this.setState({data:responseJson, isLoading:false});
       this.setState({refreshing:false})
     })
     .catch((error)=>{
@@ -145,57 +130,69 @@ export default class App extends Component {
       };
     });
     this.refs.FlatL.scrollToEnd();
-<<<<<<< HEAD
   }
   onEndReached(){
-   
-=======
->>>>>>> b88ec6fa854369cfd7f1b143334db26d53bec17e
+    alert('hết dữ liệu, đang chờ phân trang rồi làm tiếp')
   }
-
+    //search data
+    
   render() {
-  return (
-    <View>
-        {/* header */}
-      <View style = {{
-          backgroundColor:'grey', 
-          height:64, 
-          flexDirection:'row', 
-          justifyContent:'flex-end', 
-          alignItems:'center'}}>
-        <TextInput 
-          placeholder = {'Search'}
-        />
-        <TouchableOpacity onPress = {this._onPressAdd}>
-          <Image style = {{ marginRight:10}} source = {require('../img/plus.png')}/>
-        </TouchableOpacity>
-      </View>
-        {/* data */}
+    if (this.state.isLoading) {
+      return (
+        <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}>
+          <ActivityIndicator size="large" color="green"/>
+        </View>
+      );
+    }
+    return (
       <View>
-        <FlatList 
-          ref = "FlatL"
-          data={ this.state.data }
-          keyExtractor={(item, id) => id}
-          refreshControl = {
-            <RefreshControl
-              refreshing = {this.state.refreshing}
-              onRefresh  = {this.onRefresh}
-            />
-            }
-          onEndReachedThreshold ={1}
-          onEndReached = {this.onEndReached.bind(this)}
-          renderItem = {({item, index}) =>{
-            return(
-              // defined component FlatListItem above (class FlatListItem )
-            <FlatListItem item = {item} index = {index} parentFlatList = {this}>
-            </FlatListItem>)
-          }}>
-        </FlatList>
+          {/* header */}
+        <View style = {styles.viewHeader}>
+              {/* tip Search */}
+          <TextInput style = {styles.inputSearch}
+            // onChangeText={(text) => this.SearchFilterFunction(text)}
+            value={this.state.text}
+            placeholder = {'Search'}
+            placeholderTextColor = {'white'}
+            underlineColorAndroid = {'transparent'}
+          />
+            {/* icon search */}
+          <TouchableOpacity>
+            <Image style = {styles.touchSearch} source = {require('../img/searchIcon.png')}/>
+          </TouchableOpacity>
+            {/* icon plus */}
+          <TouchableOpacity onPress = {this._onPressAdd}>
+            <Image style = {styles.touchPlus} source = {require('../img/plus.png')}/>
+          </TouchableOpacity>
+        </View>
+          {/* data */}
+        <View>
+          <FlatList 
+            ref = "FlatL"
+            data={ this.state.data }
+            keyExtractor={(item, id) => id}
+              // pull to refresh
+            refreshControl = {
+              <RefreshControl
+                refreshing = {this.state.refreshing}
+                onRefresh  = {this.onRefresh}
+              />
+              }
+              // load more data
+            onEndReachedThreshold ={1}
+            onEndReached = {this.onEndReached.bind(this)}
+            renderItem = {({item, index}) =>{
+              return(
+                // defined component FlatListItem above (class FlatListItem )
+              <FlatListItem item = {item} index = {index} parentFlatList = {this}>
+              </FlatListItem>)
+            }}>
+          </FlatList>
+        </View>
+        {/* Modal here  */}
+        <AddModal ref={"modalcreate"} parentFlatList = {this}/> 
+        <UpdateModal ref={"modalupdate"} parentFlatList = {this}/> 
       </View>
-       {/* Modal here  */}
-      <AddModal ref={"modalcreate"} parentFlatList = {this}/> 
-      <UpdateModal ref={"modalupdate"} parentFlatList = {this}/> 
-    </View>
     );
   }
 }

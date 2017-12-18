@@ -1,26 +1,16 @@
 import React, { Component } from 'react';
-
 import { Text, StyleSheet, View, ListView, TextInput, ActivityIndicator, Alert } from 'react-native';
-
 export default class MyProject extends Component {
-
  constructor(props) {
-
    super(props);
-
    this.state = {
-
      isLoading: true,
      text: '',
-   
    }
-
    this.arrayholder = [] ;
  }
-
  componentDidMount() {
-
-   return fetch('https://reactnativecode.000webhostapp.com/FruitsList.php')
+   return fetch('http://192.168.1.19:3111/todo')
      .then((response) => response.json())
      .then((responseJson) => {
        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -28,28 +18,20 @@ export default class MyProject extends Component {
          isLoading: false,
          dataSource: ds.cloneWithRows(responseJson),
        }, function() {
-
          // In this block you can do something with new state.
          this.arrayholder = responseJson ;
-
        });
      })
      .catch((error) => {
        console.error(error);
      });
-     
  }
-
- GetListViewItem (fruit_name) {
-   
-  Alert.alert(fruit_name);
- 
+ GetListViewItem (name) {
+  Alert.alert(name);
  }
- 
   SearchFilterFunction(text){
-    
     const newData = this.arrayholder.filter(function(item){
-        const itemData = item.fruit_name.toUpperCase()
+        const itemData = item.name.toUpperCase()
         const textData = text.toUpperCase()
         return itemData.indexOf(textData) > -1
     })
@@ -58,7 +40,6 @@ export default class MyProject extends Component {
         text: text
     })
 }
-
  ListViewItemSeparator = () => {
    return (
      <View
@@ -70,8 +51,6 @@ export default class MyProject extends Component {
      />
    );
  }
-
-
  render() {
    if (this.state.isLoading) {
      return (
@@ -80,11 +59,9 @@ export default class MyProject extends Component {
        </View>
      );
    }
-
    return (
 
      <View style={styles.MainContainer}>
-
      <TextInput 
       style={styles.TextInputStyleClass}
       onChangeText={(text) => this.SearchFilterFunction(text)}
@@ -92,52 +69,34 @@ export default class MyProject extends Component {
       underlineColorAndroid='transparent'
       placeholder="Search Here"
        />
-
        <ListView
-
          dataSource={this.state.dataSource}
-
          renderSeparator= {this.ListViewItemSeparator}
-
          renderRow={(rowData) => <Text style={styles.rowViewContainer} 
-
-         onPress={this.GetListViewItem.bind(this, rowData.fruit_name)} >{rowData.fruit_name}</Text>}
-
+         onPress={this.GetListViewItem.bind(this, rowData.name)} >{rowData.name}</Text>}
          enableEmptySections={true}
-
          style={{marginTop: 10}}
-
        />
-
      </View>
    );
  }
 }
-
 const styles = StyleSheet.create({
-
 MainContainer :{
-
  justifyContent: 'center',
  flex:1,
  margin: 7,
-
  },
-
 rowViewContainer: {
   fontSize: 17,
   padding: 10
  },
-
  TextInputStyleClass:{
-       
   textAlign: 'center',
   height: 40,
   borderWidth: 1,
   borderColor: '#009688',
   borderRadius: 7 ,
   backgroundColor : "#FFFFFF"
-       
   }
-
 });
